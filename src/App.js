@@ -23,15 +23,21 @@ class App extends Component {
   }
 
 
-  nameChangeHandler = (event) => {
-    //don't do thios this.state.persons[1].name = "Fadzai";
-    this.setState({
-      persons: [
-        { name: "George", age: 28 },
-        { name: event.target.value, age: 28 },
-        { name: "Thomas", age: 28 }
-      ]
-    })
+  nameChangeHandler = (event, id) => {
+
+    const personIndex = this.state.persons.findIndex(person => {
+      return person.id === id;
+    });
+
+    const person = {
+      ...this.state.persons[personIndex]
+    };
+
+    person.name = event.target.value;
+    const persons = [...this.state.persons];
+    persons[personIndex] = person;
+
+    this.setState({ persons: persons })
   }
 
   togglePersonHandler = () => {
@@ -41,7 +47,8 @@ class App extends Component {
 
   render() {
     const style = {
-      backgroundColor: 'white',
+      backgroundColor: 'green',
+      color: 'white',
       font: 'inherit',
       border: '1px solid blue',
       padding: '8px',
@@ -53,22 +60,37 @@ class App extends Component {
 
     if (this.state.showPersons) {
       persons = (
-        <div>
+        <div >
           {this.state.persons.map((person, index) => {
             return <Person
               click={() => this.deletePersonHandler(index)}
               name={person.name} age={person.age}
               key={person.id}
+              changed={(event) => this.nameChangeHandler(event, person.id)}
             />
           })}
         </div>
       );
+
+      style.backgroundColor = 'red';
     }
+
+    let classes = []
+    if (this, this.state.persons.length <= 2) {
+      classes.push('red');
+    }
+
+    if (this.state.persons.length <= 1) {
+      classes.push('bold')
+    }
+
 
     return (
       <div className="App">
         <h1>Hi, I'm a React App</h1>
-        <button style={style} onClick={this.togglePersonHandler}>Switch Name</button>
+        <p className={classes.join(' ')}>Thsi is Realy working!</p>
+        <button style={style}
+          onClick={this.togglePersonHandler}>Switch Name</button>
         {persons}
       </div>
     );
